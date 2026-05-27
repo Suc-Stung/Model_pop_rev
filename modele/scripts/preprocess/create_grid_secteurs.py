@@ -12,7 +12,7 @@ import numpy as np
 import os
 from shapely.geometry import box
 from geopandas.tools import sjoin
-from typing import Optional, Literal
+from modele.utils.project_utils import save_geoparquet
 
 # OPTION: enable Dask usage (useful for very large sectors)
 USE_DASK = True
@@ -22,15 +22,6 @@ CELL_SIZE = 200
 SECTEURS_PATH = "modele/data/processed/secteurs.parquet"
 OUTPUT_DIR = "modele/output/grid"
 OUTPUT_PATH = os.path.join(OUTPUT_DIR, f"grid_mobiliscope_{CELL_SIZE}m.parquet")
-
-
-# Save a GeoDataFrame in compressed GeoParquet format
-def save_geoparquet(
-    gdf: gpd.GeoDataFrame,
-    path: str,
-    compression: Optional[Literal["snappy", "gzip", "brotli"]] = "brotli"
-):
-    gdf.to_parquet(path, compression=compression, index=False)
 
 
 # Create a regular grid (tiling) from bounds and cell size

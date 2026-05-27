@@ -14,8 +14,8 @@ import zipfile
 import geopandas as gpd
 import pandas as pd
 import warnings
-from typing import Optional, Literal
 from modele.scripts.acquisition.acquisition_utils import print_status, load_config
+from modele.utils.project_utils import save_geoparquet
 
 # === SCRIPT PARAMETERS ===
 URL_SHAPE = "https://www.insee.fr/fr/statistiques/fichier/6214726/grille200m_shp.7z"
@@ -26,15 +26,6 @@ OUTPUT_FILE = os.path.join(OUTPUT_DIR, "recens.parquet")
 
 # Disable annoying warnings related to pyogrio
 warnings.filterwarnings("ignore", category=RuntimeWarning, module="pyogrio")
-
-
-# Saves a GeoDataFrame in GeoParquet format with compression
-def save_geoparquet(
-    gdf: gpd.GeoDataFrame,
-    path: str,
-    compression: Optional[Literal['snappy', 'gzip', 'brotli']] = "brotli"
-):
-    gdf.to_parquet(path, compression=compression, index=False)
 
 
 # Downloads and extracts a .7z or .zip archive

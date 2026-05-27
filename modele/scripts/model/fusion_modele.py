@@ -11,6 +11,7 @@ import pandas as pd
 import geopandas as gpd
 import os
 from modele.scripts.features.features_utils import print_status
+from modele.utils.project_utils import clean_nom
 
 # === PATHS ===
 FEATURES_PATH = "modele/output/features"
@@ -19,10 +20,6 @@ SECTEURS_PATH = "modele/data/processed/secteurs.parquet"
 CIBLE_JOUR_PATH = "modele/data/target/all_villes_pop_jour_secteurs.geojson"
 CIBLE_NUIT_PATH = "modele/data/target/all_villes_pop_nuit_secteurs.geojson"
 OUTPUT_PATH = "modele/output/fusion/features_modele.csv"
-
-# Cleaning function
-def clean_nom(s):
-    return s.str.lower().str.strip().str.replace(r"[^\w]+", "_", regex=True)
 
 # Function 1: merge 200m features into Mobiliscope sectors
 def fusionner_features_par_secteur():

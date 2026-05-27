@@ -12,24 +12,14 @@ import requests
 import geopandas as gpd
 from zipfile import ZipFile
 from io import BytesIO
-from typing import Literal, Optional
 from modele.scripts.acquisition.acquisition_utils import load_config, print_status
+from modele.utils.project_utils import save_geoparquet
 
 # === SCRIPT PARAMETERS ===
 BPE_URL = "https://www.insee.fr/fr/statistiques/fichier/8217525/BPE23.zip"
 OUTPUT_DIR = "modele/data/processed"
 OUTPUT_PATH = os.path.join(OUTPUT_DIR, "bpe.parquet")
-BPE_CSV_FILENAME = "BPE23.csv"  # Name of the expected file in the ZIP archive
-
-
-# Saves a GeoDataFrame in GeoParquet format with compression
-def save_geoparquet(
-    gdf: gpd.GeoDataFrame,
-    path: str,
-    compression: Optional[Literal['snappy', 'gzip', 'brotli']] = "brotli"
-):
-    # Saves spatial data compressed for optimized storage
-    gdf.to_parquet(path, compression=compression, index=False)
+BPE_CSV_FILENAME = "BPE23.csv"  # Nom du fichier CSV attendu dans l'archive ZIP
 
 
 # Main function for downloading and processing BPE data

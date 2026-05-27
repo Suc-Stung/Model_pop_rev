@@ -43,12 +43,13 @@ def download_sirene():
         df["latitude"] = pd.to_numeric(df["coordonneeLambertOrdonneeEtablissement"], errors="coerce")
         df_geo = df.dropna(subset=["longitude", "latitude"])  # Remove rows with invalid coordinates
         df_geo = df_geo[np.isfinite(df_geo["longitude"]) & np.isfinite(df_geo["latitude"])]
+        # Coordonnées Lambert 93 (EPSG:2154), pas WGS84
         gdf = gpd.GeoDataFrame(
             df_geo,
             geometry=gpd.points_from_xy(df_geo["longitude"], df_geo["latitude"]),
-            crs="EPSG:4326"
-        ).to_crs("EPSG:2154")
-        gdf.to_file(output_geojson, driver="GeoJSON")  # Save as GeoJSON
+            crs="EPSG:2154"
+        )
+        gdf.to_file(output_geojson, driver="GeoJSON")  # Sauvegarde en GeoJSON
         print_status("SIRENE downloaded and converted", "ok")
     except Exception as e:
         print_status("SIRENE GeoJSON conversion failed", "err", str(e))

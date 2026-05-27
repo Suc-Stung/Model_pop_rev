@@ -49,12 +49,14 @@ def compute_distance_moyenne_batiments(grid: gpd.GeoDataFrame, bati: gpd.GeoData
         # Step 4: Compute average distances with parallelization
         print_status("Computing average distances", "info")
         grouped = list(joined.groupby("idINSPIRE"))
+        # Optimisation : chunksize plus élevé pour réduire les overheads de parallélisation
+        chunksize_opt = max(1, len(grouped) // (cpu_count() * 4))
         results = process_map(
             compute_mean_distance,
             grouped,
             max_workers=cpu_count(),
-            chunksize=1,
-            desc="Computing distances"
+            chunksize=chunksize_opt,
+            desc="Calcul des distances"
         )
 
         return pd.DataFrame(results, columns=["idINSPIRE", "distance_moyenne_batiments"])

@@ -15,9 +15,9 @@ import numpy as np
 from zipfile import ZipFile
 from io import BytesIO
 from tqdm import tqdm
-from typing import Optional, Literal
 from shapely.geometry import Point
 from modele.scripts.acquisition.acquisition_utils import load_config, print_status
+from modele.utils.project_utils import save_geoparquet
 
 # === SCRIPT PARAMETERS ===
 SIRENE_URL = "https://www.data.gouv.fr/fr/datasets/r/0651fb76-bcf3-4f6a-a38d-bc04fa708576"
@@ -25,22 +25,6 @@ OUTPUT_DIR = "modele/data/raw"
 CACHE_DIR = "modele/cache"
 OUTPUT_PATH = os.path.join(OUTPUT_DIR, "sirene.parquet")
 CHUNK_SIZE = 100_000
-
-
-# Saves a GeoDataFrame in GeoParquet format with append option
-def save_geoparquet(
-    gdf: gpd.GeoDataFrame,
-    path: str,
-    compression: Optional[Literal['snappy', 'gzip', 'brotli']] = "brotli",
-    append: bool = False
-):
-    # If append = True and file already exists: concatenate the old and new data
-    if append and os.path.exists(path):
-        existing = gpd.read_parquet(path)
-        gdf_concat = pd.concat([existing, gdf], ignore_index=True)
-        gdf = gpd.GeoDataFrame(gdf_concat, geometry=existing.geometry.name, crs=existing.crs)
-
-    gdf.to_parquet(path, compression=compression, index=False)
 
 
 # Main function: downloads and processes SIRENE data
@@ -79,11 +63,12 @@ def download_sirene():
                     if chunk_geo.empty:
                         continue
 
-                    # Create point geometry
+                    # Création de la géométrie : les colonnes longitude/latitude contiennent
+                    # des coordonnées Lambert 93 (EPSG:2154), pas des degrés WGS84
                     chunk_geo["geometry"] = chunk_geo.apply(
                         lambda row: Point(row["longitude"], row["latitude"]), axis=1
                     )
-                    chunk_geo = gpd.GeoDataFrame(chunk_geo, geometry="geometry", crs="EPSG:4326")
+                    chunk_geo = gpd.GeoDataFrame(chunk_geo, geometry="geometry", crs="EPSG:2154")
 
                     # Save the chunk in append mode
                     save_geoparquet(chunk_geo, OUTPUT_PATH, append=True)

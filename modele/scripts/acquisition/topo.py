@@ -16,8 +16,8 @@ import geopandas as gpd
 import pandas as pd
 from io import BytesIO
 from tqdm import tqdm
-from typing import Optional, Literal
 from modele.scripts.acquisition.acquisition_utils import print_status
+from modele.utils.project_utils import save_geoparquet
 
 # === SCRIPT PARAMETERS ===
 YAML_PATH = "utils/topo_url.yaml"
@@ -25,15 +25,6 @@ CACHE_DIR = "modele/cache"
 BATIMENT_DIR = os.path.join(CACHE_DIR, "batiments")
 OUTPUT_DIR = "modele/data/processed"
 OUTPUT_PATH = os.path.join(OUTPUT_DIR, "BATIMENT.parquet")
-
-
-# Saves a GeoDataFrame in GeoParquet format with compression
-def save_geoparquet(
-    gdf: gpd.GeoDataFrame,
-    path: str,
-    compression: Optional[Literal['snappy', 'gzip', 'brotli']] = "brotli"
-):
-    gdf.to_parquet(path, compression=compression, index=False)
 
 
 # Loads BD TOPO URLs from a YAML file (key = department number + suffix)

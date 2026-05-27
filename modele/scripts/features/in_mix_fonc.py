@@ -40,8 +40,8 @@ def compute_indice_mixite_fonctionnelle(grid: gpd.GeoDataFrame) -> pd.DataFrame:
             print_status("SIRENE file missing", "err", SIRENE_PATH)
             return pd.DataFrame(columns=["idINSPIRE", "indice_mixite_fonctionnelle"])
 
-        # Load SIRENE
-        gdf = gpd.read_parquet(SIRENE_PATH).to_crs("EPSG:2154")
+        # Chargement SIRENE — les colonnes longitude/latitude contiennent des coordonnées Lambert (EPSG:2154)
+        gdf = gpd.read_parquet(SIRENE_PATH)
         gdf["x"] = pd.to_numeric(gdf["longitude"], errors="coerce")
         gdf["y"] = pd.to_numeric(gdf["latitude"], errors="coerce")
         gdf = gdf.dropna(subset=["x", "y"])

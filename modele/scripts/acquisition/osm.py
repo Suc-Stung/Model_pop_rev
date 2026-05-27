@@ -10,8 +10,8 @@ Usage : This script is called by acquisition_pipeline.py to automate the acquisi
 import os
 import requests
 import geopandas as gpd
-from typing import Optional, Literal
 from modele.scripts.acquisition.acquisition_utils import load_config, print_status
+from modele.utils.project_utils import save_geoparquet
 
 # === SCRIPT PARAMETERS ===
 OVERPASS_URL = "https://overpass-api.de/api/interpreter"
@@ -20,15 +20,6 @@ REGIONS_GEOJSON = "https://raw.githubusercontent.com/gregoiredavid/france-geojso
 TAGS = ["building", "shop", "office", "amenity", "leisure"]
 TAGS_EXTRA = ["building:levels", "building:use", "building:material", "building:roof:shape", "name", "operator"]
 CRS = "EPSG:4326"
-
-# Saves a GeoDataFrame in GeoParquet format with compression
-def save_geoparquet(
-    gdf: gpd.GeoDataFrame,
-    path: str,
-    compression: Optional[Literal['snappy', 'gzip', 'brotli']] = "brotli"
-):
-    # Saves spatial data with compression
-    gdf.to_parquet(path, compression=compression, index=False)
 
 
 # Retrieves the geographic bounds of metropolitan France from the simplified GeoJSON file
